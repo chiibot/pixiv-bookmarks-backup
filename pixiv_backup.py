@@ -114,10 +114,7 @@ def fetch_all_bookmarks(api, downloaded_ids, user_id="me", restrict="public", ma
             print(f"[*] 没有更多收藏了（共 {len(bookmarks)} 个作品）。")
             break
 
-        hit_existing = False
         for illust in result["illusts"]:
-            if illust["id"] in downloaded_ids:
-                hit_existing = True
             bookmarks.append({
                 "id": illust["id"],
                 "title": illust.get("title", ""),
@@ -130,10 +127,6 @@ def fetch_all_bookmarks(api, downloaded_ids, user_id="me", restrict="public", ma
                 "type": illust.get("type", ""),
                 "tags": [t.get("name", "") for t in illust.get("tags", [])],
             })
-
-        if hit_existing:
-            print("[*] 本页命中已下载作品，停止继续翻页。")
-            break
 
         # 下一页
         next_max = result.get("next_url")
@@ -198,6 +191,14 @@ def download_illust(api, illust, output_dir, filename_pattern, delay):
             for page in illust["meta_pages"]:
                 if page.get("image_urls", {}).get("large"):
                     urls.append(page["image_urls"]["large"])
+        if not urls and illust.get("image_urls"):
+            fallback = (
+                illust["image_urls"].get("large")
+                or illust["image_urls"].get("medium")
+                or illust["image_urls"].get("square_medium")
+            )
+            if fallback:
+                urls.append(fallback)
 
         if urls:
             url = urls[0]
