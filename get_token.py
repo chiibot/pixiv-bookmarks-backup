@@ -5,6 +5,7 @@ Pixiv refresh_token 获取工具（手动OAuth流程）。
 运行后会：
 1. 生成一个授权URL，在浏览器中打开
 2. 你登录Pixiv后，浏览器会跳转到 pixiv://...?code=xxx
+   如果没有跳转到 pixiv:// 开头的URL，按 F12 → 网络 找到它
 3. 复制那个URL粘贴回来
 4. 自动换取refresh_token并保存到config.json
 """
@@ -121,6 +122,10 @@ def main():
     print()
     print("[步骤2] 登录成功后，浏览器会跳转到一个 pixiv://... 开头的URL")
     print("        请复制完整的URL并粘贴到这里。")
+    print()
+    print("  如果浏览器没有跳转到 pixiv:// 开头的URL，而是停在了普通网页：")
+    print("  按 F12 打开开发者工具 → 网络(Network) 标签页")
+    print("  → 在列表中找到 pixiv:// 开头的请求 → 右键复制URL")
     print()
 
     redirect_url = input("粘贴URL: ").strip()
